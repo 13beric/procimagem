@@ -70,3 +70,6 @@ fragments_list = extract_text_fragments(contours)
 
 for fragment in fragments_list:
         print(identify_characters(fragment))
+        
+cv2.waitKey(100000)
+cv2.destroyAllWindows()
