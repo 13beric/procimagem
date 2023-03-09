@@ -1,11 +1,11 @@
 import cv2
-
+import re
 from processor import Processor
 
-TESSERACT_PATH = r"C:\Program Files\Tesseract-OCR\Tesseract.exe"
+TESSERACT_PATH = r"C:\Users\carad\AppData\Local\Programs\Tesseract-OCR\Tesseract.exe"
 
 #Abertura da imagem
-original_img = cv2.imread('teste.png')
+original_img = cv2.imread('audi.jpg')
 
 height, width, channels = original_img.shape
 
@@ -25,9 +25,11 @@ fragments_list = processor.text_localize(preprocessed_img, original_img)
 # cv2.imshow('image preprocessed', preprocessed_img)
 
 
-for fragment in fragments_list:
-        #fragment_desfocado = cv2.GaussianBlur(fragment, (3, 3), 0)
-        print(processor.text_recognize(fragment))
+pattern = '[A-Z]{3}\d{4}'
 
-cv2.waitKey(10000000)
-cv2.destroyAllWindows()
+for fragment in fragments_list:
+        if  re.match(pattern,processor.text_recognize(fragment)):
+                print(processor.text_recognize(fragment))
+
+# cv2.waitKey(100000)
+# cv2.destroyAllWindows()
