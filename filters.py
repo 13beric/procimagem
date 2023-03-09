@@ -9,22 +9,25 @@ def remove_noise(image):
     return cv2.medianBlur(image,5)
     
 # Segmentação
-def thresholding(image):
-    return cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+def thresholding(image, thresh):
+    #return cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 4)
+    #return cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+    return cv2.threshold(image, thresh, 255, cv2.THRESH_BINARY)[1]
+
 
 #Dilatação
 def dilate(image):
-    kernel = np.ones((5,5),np.uint8)
+    kernel = np.ones((2,2),np.uint8)
     return cv2.dilate(image, kernel, iterations = 1)
         
 #Erosão
 def erode(image):
-    kernel = np.ones((5,5),np.uint8)
+    kernel = np.ones((2,1),np.uint8)
     return cv2.erode(image, kernel, iterations = 1)
 
 #Abertura - erosão e dilatação
 def opening(image):
-    kernel = np.ones((5,5),np.uint8)
+    kernel = np.ones((2,1),np.uint8)
     return cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
 
 #canny edge detection
