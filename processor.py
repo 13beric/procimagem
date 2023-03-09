@@ -22,11 +22,9 @@ class Processor:
         for threshold in self.thresholds:
             threshimage = thresholding(blur, threshold, cv2.THRESH_BINARY)
             images_list.append(threshimage)
-            #cv2.imshow(f'image{threshold}', threshimage)
         return images_list
     
     def plate_identify(self, original_img, preprocessed_images : list):
-        
         possible_plates = []
         
         for image in preprocessed_images:
@@ -38,16 +36,14 @@ class Processor:
                     aprox = cv2.approxPolyDP(c, 0.03 * perimetro, True)
                     if len(aprox) == 4:
                         (x, y, alt, lar) = cv2.boundingRect(c)
-                        roi = original_img[y+15:(y + lar)-5, x+5:x + alt - 5]
+                        roi = original_img[y+5:(y + lar)-5, x+10:x + alt - 10]
                         possible_plates.append(roi)
         
         return possible_plates
         
-    def plate_recongnize(self, fragments : list):
-        
+    def plate_recongnize(self, fragments : list, id):
         results = []
         
-        #i = 0
         for fragment in fragments:
             
             resized_plate = cv2.resize(fragment, None, fx=4, fy=4, interpolation=cv2.INTER_CUBIC)    
@@ -61,17 +57,22 @@ class Processor:
             img = dilate(img)
             img = erode(img)
 
-            #cv2.imwrite(f'roi{i}.jpg', img)
-            #i+=1
             pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
             config = r'-c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 --psm 6'
         
             recognized_text = pytesseract.image_to_string(img, config=config)
             
-            pattern = '[A-Z]{3}\d{4}'
-            a = re.search(pattern, recognized_text)
-            
-            if a is not None:
-                results.append(a.group())
+            patterns = []
+            patterns.append('[A-Z]{3}\d{1}[A-Z]{1}\d{2}')
+            patterns.append('[A-Z]{3}\d{4}')
+
+            for pattern in patterns:
+                a = re.search(pattern, recognized_text)
+                if a is not None:
+                    results.append(a.group())
+                    cv2.imwrite(f'output/placa_processada_{id}.jpg', img)
+                    cv2.imwrite(f'output/placa_{id}.jpg', fragment)
+
+
                 
         return set(results)

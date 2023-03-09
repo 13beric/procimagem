@@ -1,7 +1,7 @@
 import cv2
 from processor import Processor
 
-for i in range(1, 10):
+for i in range(1, 14):
     original_img = cv2.imread(f'input/carro{i}.jpg')
 
     height, width, channels = original_img.shape
@@ -14,7 +14,7 @@ for i in range(1, 10):
 
     fragments_list = processor.plate_identify(original_img, processed_images)
 
-    results = processor.plate_recongnize(fragments_list)
+    results = processor.plate_recongnize(fragments_list, f'carro{i}')
     print(f"Imagem: carro{i}.jpg | Placa reconhecida: {results if not len(results) == 0 else 'Placa não reconhecida'}")
     
 # cv2.waitKey(100000)
