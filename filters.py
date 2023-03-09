@@ -19,7 +19,7 @@ def dilate(image):
         
 #Erosão
 def erode(image):
-    kernel = np.ones((2,1),np.uint8)
+    kernel = np.ones((4,4),np.uint8)
     return cv2.erode(image, kernel, iterations = 1)
 
 #Abertura - erosão e dilatação

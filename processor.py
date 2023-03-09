@@ -1,5 +1,6 @@
 import cv2
 import pytesseract
+import re
 
 from filters import get_grayscale, remove_noise, thresholding, dilate, erode, opening, canny, deskew, match_template
 
@@ -54,7 +55,7 @@ class Processor:
     def plate_recongnize(self, fragments : list):
         
         results = []
-        
+        i = 0
         for fragment_dict in fragments:
             
             resized_plate = cv2.resize(fragment_dict['plate_image'], None, fx=4, fy=4, interpolation=cv2.INTER_CUBIC)    
@@ -63,13 +64,22 @@ class Processor:
             
             threshold = thresholding(gray, fragment_dict['threshold'])
       
-            blur = cv2.GaussianBlur(threshold, (5, 5), 0)
+            blur = remove_noise(threshold)
+            
+            blur = erode(blur)
+            cv2.imwrite(f'roi{i}.jpg', blur)
+            
+            i += 1
 
             pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
             config = r'-c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 --psm 6'
-
+        
             recognized_text = pytesseract.image_to_string(blur, config=config)
-            if recognized_text:
+            
+            pattern = '[A-Z]{3}\d{4}'
+            a = re.search(pattern, recognized_text)
+            
+            if recognized_text and a is not None:
                 results.append(recognized_text)
                 
         for result in set(results):

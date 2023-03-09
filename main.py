@@ -2,7 +2,7 @@ import cv2
 from processor import Processor
 
 #Abertura da imagem
-original_img = cv2.imread('audi.jpg')
+original_img = cv2.imread('teste.jpg')
 
 height, width, channels = original_img.shape
 
