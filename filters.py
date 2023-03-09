@@ -14,12 +14,12 @@ def thresholding(image, thresh):#return cv2.threshold(image, 0, 255, cv2.THRESH_
 
 #Dilatação
 def dilate(image):
-    kernel = np.ones((5, 5),np.uint8)
+    kernel = np.ones((10, 10),np.uint8)
     return cv2.dilate(image, kernel, iterations = 1)
         
 #Erosão
 def erode(image):
-    kernel = np.ones((5, 5),np.uint8)
+    kernel = np.ones((10, 10),np.uint8)
     return cv2.erode(image, kernel, iterations = 1)
 
 #Abertura - dilate and erode
