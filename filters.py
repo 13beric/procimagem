@@ -10,16 +10,16 @@ def remove_noise(image):
     
 # Segmentação
 def thresholding(image, thresh):#return cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
-    return cv2.threshold(image, thresh, 255, cv2.THRESH_BINARY)[1]
+    return cv2.threshold(image, thresh, 255, cv2.THRESH_TOZERO)[1]
 
 #Dilatação
 def dilate(image):
-    kernel = np.ones((2,1),np.uint8)
+    kernel = np.ones((2,2),np.uint8)
     return cv2.dilate(image, kernel, iterations = 1)
         
 #Erosão
 def erode(image):
-    kernel = np.ones((4,4),np.uint8)
+    kernel = np.ones((3, 3),np.uint8)
     return cv2.erode(image, kernel, iterations = 1)
 
 #Abertura - erosão e dilatação

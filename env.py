@@ -1,1 +1,1 @@
-TESSERACT_PATH = r"C:\Users\ericb\AppData\Local\Programs\Tesseract-OCR\Tesseract.exe"
+TESSERACT_PATH = r"C:\Program Files\Tesseract-OCR\Tesseract.exe"

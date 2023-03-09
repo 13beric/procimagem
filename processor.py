@@ -11,7 +11,7 @@ MIN_CONTOUR_AREA = 300
 class Processor:
     
     #Possibilidades de threshold (imagem, placa) para melhor se adaptar a imagem
-    thresholds = [[85, 50], [140, 100]]
+    thresholds = [[50, 30], [85, 50], [140, 100]]
     
     def image_preprocess(self, image):
         
@@ -24,10 +24,20 @@ class Processor:
         #Gera lista de dicts com a imagem com cada threshold e o respectivo threshold que tem que ser aplicado à placa
         image_dicts_list = []
         for threshold in self.thresholds:
+            threshimage = thresholding(blur, threshold[0])
             image_dicts_list.append({
-                    'image': thresholding(blur, threshold[0]),
+                    'image': threshimage,
                     'plate_threshold': threshold[1]
                 })
+            cv2.imshow(f'Image{threshold[1]}', threshimage)
+
+        imageteste = cv2.adaptiveThreshold(remove_noise(blur), 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
+        image_dicts_list.append({
+            'image': imageteste,
+            'plate_threshold': 50
+        })
+        cv2.imshow(f'Imageteste', imageteste)
+
 
         return image_dicts_list
     
@@ -60,21 +70,26 @@ class Processor:
             
             resized_plate = cv2.resize(fragment_dict['plate_image'], None, fx=4, fy=4, interpolation=cv2.INTER_CUBIC)    
             
-            gray = get_grayscale(resized_plate)
+            img = get_grayscale(resized_plate)
             
-            threshold = thresholding(gray, fragment_dict['threshold'])
+            img = remove_noise(img)
+
+            
+            img = thresholding(img, fragment_dict['threshold'])
       
-            blur = remove_noise(threshold)
-            
-            blur = erode(blur)
-            cv2.imwrite(f'roi{i}.jpg', blur)
-            
+            img = erode(img)
+
+            #img = dilate(img)
+
+
+
+            cv2.imwrite(f'roi{i}.jpg', img)
             i += 1
 
             pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
             config = r'-c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 --psm 6'
         
-            recognized_text = pytesseract.image_to_string(blur, config=config)
+            recognized_text = pytesseract.image_to_string(img, config=config)
             
             pattern = '[A-Z]{3}\d{4}'
             a = re.search(pattern, recognized_text)
