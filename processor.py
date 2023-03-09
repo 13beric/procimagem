@@ -55,26 +55,30 @@ class Processor:
     def plate_recongnize(self, fragments : list):
         
         results = []
-        i = 0
+        # i = 0
         for fragment_dict in fragments:
             
-            resized_plate = cv2.resize(fragment_dict['plate_image'], None, fx=4, fy=4, interpolation=cv2.INTER_CUBIC)    
+            height, width, channels = fragment_dict['plate_image'].shape
+            resized_plate = cv2.resize(fragment_dict['plate_image'], None, fx=800/width, fy=800/width, interpolation=cv2.INTER_CUBIC)    
             
             gray = get_grayscale(resized_plate)
             
             threshold = thresholding(gray, fragment_dict['threshold'])
-      
+            
             blur = remove_noise(threshold)
             
-            blur = erode(blur)
-            cv2.imwrite(f'roi{i}.jpg', blur)
+            dilated = dilate(blur)
             
-            i += 1
+            eroded = erode(dilated)
+            
+            # cv2.imwrite(f'roi{i}.jpg', eroded)
+            
+            # i += 1
 
             pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
             config = r'-c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 --psm 6'
         
-            recognized_text = pytesseract.image_to_string(blur, config=config)
+            recognized_text = pytesseract.image_to_string(eroded, config=config)
             
             pattern = '[A-Z]{3}\d{4}'
             a = re.search(pattern, recognized_text)

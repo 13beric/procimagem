@@ -2,7 +2,7 @@ import cv2
 from processor import Processor
 
 #Abertura da imagem
-original_img = cv2.imread('teste.jpg')
+original_img = cv2.imread('audi.jpg')
 
 height, width, channels = original_img.shape
 
@@ -16,5 +16,5 @@ fragments_list = processor.plate_identify(original_img, processed_images)
 
 processor.plate_recongnize(fragments_list)
 
-cv2.waitKey(10000)
-cv2.destroyAllWindows()
+# cv2.waitKey(10000)
+# cv2.destroyAllWindows()
